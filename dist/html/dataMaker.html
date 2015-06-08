@@ -1,0 +1,78 @@
+
+<!--
+Created by shenshen on 15/5/21.
+
+--><!DOCTYPE html>
+<html>
+  <head>
+    <script src="../js/vender.js"></script>
+    <style>
+      [layout=row] md-input-container {
+         padding-bottom: 0;
+      }
+      
+      
+    </style>
+  </head>
+  <body ng-controller="AppCtrl">
+    <script type="text/ng-template" id="dataItem.html">
+      <div layout="row" layout-padding="">
+        <div flex="10" offset="{{5*value.level}}" ng-if="$parent.$parent.value.type!='array'">
+          <md-input-container aria-label="名称">
+            <label>名称</label>
+            <input ng-model="value.name">
+          </md-input-container>
+        </div>
+        <div ng-if="$parent.$parent.value.type=='array'" offset="{{5*value.level}}"></div>
+        <div flex="10">
+          <md-select ng-model="value.type" placeholder="数据类型" ng-change="changeType(value)">
+            <md-option ng-repeat="(type,typeDetail) in types" value="{{type}}">{{typeDetail.name}}</md-option>
+          </md-select>
+        </div>
+        <div flex="5" ng-if="value._child()">
+          <md-button ng-click="addStruct(value)" class="md-mini md-fab">add</md-button>
+        </div>
+        <div flex="10" ng-if="value.type=='array'">
+          <md-input-container>
+            <label>循环个数</label>
+            <input type="number" required ng-model="value.opt.childLength">
+          </md-input-container>
+        </div>
+        <div flex="25" ng-if="value.type=='string'">
+          <md-radio-group ng-model="value.opt.textType" layout="horizontal">
+            <md-radio-button value="chineseText">中文</md-radio-button>
+            <md-radio-button value="englishSingle">英文</md-radio-button>
+            <md-radio-button value="englishText">字母</md-radio-button>
+          </md-radio-group>
+        </div>
+        <div flex="5" ng-if="types[value.type].opt.min!=null">
+          <md-input-container>
+            <label>Min</label>
+            <input type="number" required name="min" ng-model="value.opt.min" ng-init="types[value.type].opt.min" ng-disabled="value.opt.valuein">
+          </md-input-container>
+        </div>
+        <div flex="5" ng-if="types[value.type].opt.max">
+          <md-input-container>
+            <label>Max</label>
+            <input type="number" required name="max" ng-model="value.opt.max" ng-init="types[value.type].opt.max" ng-disabled="value.opt.valuein">
+          </md-input-container>
+        </div>
+        <div flex="15" ng-if="types[value.type].opt.valuein!=null">
+          <md-input-container>
+            <label>约定值</label>
+            <input ng-model="value.opt.valuein" ng-disabled="value.type=='array'&amp;&amp;value.opt.childType!='0'">
+          </md-input-container>
+        </div>
+        <div flex="5">
+          <md-button ng-click="delStruct($parent.$parent.$parent.value,key,value)" ng-if="$parent.value.level!=0" class="md-mini md-fab md-warn">del</md-button>
+        </div>
+      </div>
+      <div ng-repeat="(key,value) in value._childItem" ng-include="'dataItem.html'"></div>
+    </script>
+    <md-button ng-click="doCreateJson($event)" class="md-raised">JSON</md-button>
+    <md-button ng-click="doCreateJs($event)" class="md-raised">Javascript</md-button>
+    <md-button ng-click="doCreateMySql($event)" class="md-raised">MySql</md-button>
+    <div ng-repeat="(key,value) in struct" ng-include="'dataItem.html'"></div>
+  </body>
+  <script src="../js/dataMakerJob.js"></script>
+</html>
